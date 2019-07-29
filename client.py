@@ -7,7 +7,7 @@ PORT = 5000
 
 def message_back(socket):
     
-    s.send(bytes(input("Which client are you? ", "utf-8")))
+    s.send(bytes(raw_input("Which client are you? ", "utf-8")))
     msg2 = ''
     full2 = ''
     pause = input("Waiting message")
@@ -28,11 +28,13 @@ def loop():
         while True:
             msg1 = s.recv(16)
             try:
-                full1 += msg.decode("utf-8")
-            print (full1)
-        pause = ''
-        pause = input("Waiting print")
+                full1 += msg1.decode("utf-8")
+            except:
+                print ('full_msg except')
+            if (len(full1) >= 21):
+                break
         print (full1)
+        s.send(bytes("Hello Server", "utf-8"))
         message_back(s)
 
 def main():
