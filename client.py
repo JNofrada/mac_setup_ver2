@@ -7,7 +7,7 @@ PORT = 5000
 
 def message_back(socket):
     
-    s.send(bytes(raw_input("Which client are you? ", "utf-8")))
+    socket.send(bytes(raw_input("Which client are you? ", "utf-8")))
     msg2 = ''
     full2 = ''
     pause = input("Waiting message")
