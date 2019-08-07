@@ -18,6 +18,10 @@ def message_back(socket):
     pause = input("Waiting print")
     print (full2)
 
+def get_buff(message):
+    message = f"{len(message):<{BUF_SIZE}}" + message
+    return (message)
+
 def loop():
     while True:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,6 +38,7 @@ def loop():
                 new_msg = False
             full1 += msg1.decode("utf-8")
             if len(full1)-BUF_SIZE == msg_len:
+                print (full1)
                 print(full1[BUF_SIZE:])
                 break
         s.send(bytes("Hello Server", "utf-8"))

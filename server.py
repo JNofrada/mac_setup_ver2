@@ -35,6 +35,10 @@ def message_back(socket):
     print(client)
     s.send(bytes(client, "utf-8"))
 
+def get_buff(message):
+    message = f"{len(message):<{BUF_SIZE}}" + message
+    return (message)
+
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((socket.gethostname(),PORT))
@@ -44,7 +48,7 @@ def loop():
         clientsocket, address = s.accept()
         print(f"Connection from {address} has been established")
         msg = "Welcome to the server"
-        msg = f"{len(msg):<BUF-SIZE}" + msg
+        msg = get_buff(msg)
         clientsocket.send(bytes(msg, "utf-8"))
         msg = ''
         full_msg = ''
