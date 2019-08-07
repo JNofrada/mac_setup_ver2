@@ -2,6 +2,7 @@ import sys
 import time
 import socket
 
+BUF_SIZE = 29
 HOST = "172.20.1.232"
 PORT = 5000
 CLIENTS = []
@@ -29,7 +30,7 @@ def message_back(socket):
     client = ''
     print ("waiting message")
     while True:
-        msg = s.recv(1024)
+        msg = s.recv(30)
         client += msg.decode("utf-8")
     print(client)
     s.send(bytes(client, "utf-8"))
@@ -42,17 +43,20 @@ def loop():
     while True:
         clientsocket, address = s.accept()
         print(f"Connection from {address} has been established")
-        clientsocket.send(bytes("Welcome to the server", "utf-8"))
+        msg = "Welcome to the server"
+        msg = f"{len(msg):<BUF-SIZE}" + msg
+        clientsocket.send(bytes(msg, "utf-8"))
         msg = ''
         full_msg = ''
         while True:
-            msg = s.recv(16)
+            msg = clientsocket.recv(30)
             try:
                 full_msg += msg.decode("utf-8)")
             except:
                 print ("full message except")
             if (len(full_msg) >= 12):
                 break
+        print (full_msg)
         if clientsocket is True:
             message_back(s)
 

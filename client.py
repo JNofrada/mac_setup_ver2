@@ -2,12 +2,13 @@ import sys
 import socket
 import time
 
+BUF_SIZE = 29
 HOST = '172.20.1.232'
 PORT = 5000
 
 def message_back(socket):
-    
-    socket.send(bytes(raw_input("Which client are you? ", "utf-8")))
+    client = input("Which client are you? ")
+    socket.send(bytes(client, "utf-8"))
     msg2 = ''
     full2 = ''
     pause = input("Waiting message")
