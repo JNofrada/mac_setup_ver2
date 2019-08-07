@@ -13,7 +13,7 @@ def message_back(socket):
     full2 = ''
     pause = input("Waiting message")
     while True:
-        msg2 = s.recv(1024)
+        msg2 = s.recv(32)
         full2 += msg.decode("utf-8")
     pause = input("Waiting print")
     print (full2)
@@ -25,23 +25,23 @@ def loop():
         s.connect((HOST, PORT))
         msg1 = ''
         full1 = ''
+        new_msg = True
         print ("Waiting message")
         while True:
-            msg1 = s.recv(16)
-            try:
-                full1 += msg1.decode("utf-8")
-            except:
-                print ('full_msg except')
-            if (len(full1) >= 21):
+            msg1 = s.recv(32)
+            if new_msg:
+                msg_len = int(msg1[:BUF_SIZE])
+                new_msg = False
+            full1 += msg1.decode("utf-8")
+            if len(full1)-BUF_SIZE == msg_len:
+                print(full1[BUF_SIZE:])
                 break
-        print (full1)
         s.send(bytes("Hello Server", "utf-8"))
         message_back(s)
 
 def main():
     loop()
-    pause = ''
-    pause = raw_input("Press Enter to leave")
+    pause = input("Press Enter to leave")
 
 if __name__ == '__main__':
     main()

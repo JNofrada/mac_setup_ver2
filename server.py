@@ -50,10 +50,7 @@ def loop():
         full_msg = ''
         while True:
             msg = clientsocket.recv(30)
-            try:
-                full_msg += msg.decode("utf-8)")
-            except:
-                print ("full message except")
+            full_msg += msg.decode("utf-8)")
             if (len(full_msg) >= 12):
                 break
         print (full_msg)
