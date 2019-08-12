@@ -11,11 +11,11 @@ def message_back(socket):
     socket.send(bytes(client, "utf-8"))
     msg2 = ''
     full2 = ''
-    pause = input("Waiting message")
+    print ("Waiting message")
     while True:
-        msg2 = s.recv(32)
-        full2 += msg.decode("utf-8")
-    pause = input("Waiting print")
+        msg2 = socket.recv(32)
+        full2 += msg2.decode("utf-8")
+        if (len(full2) >= 8): break
     print (full2)
 
 def get_buff(message):

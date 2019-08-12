@@ -6,6 +6,7 @@ BUF_SIZE = 29
 HOST = "172.20.1.232"
 PORT = 5000
 CLIENTS = []
+COMP =[]
 
 class Client:
     def __init__(self, name, addigy):
@@ -17,7 +18,7 @@ class Client:
         print(self.addigy)
 
 def create_list(CLIENTS):
-    client = open("clients.txt")
+    client = open("client.txt")
     while True: 
         client_name = str(client.readline())
         if not client_name: break
@@ -30,10 +31,11 @@ def message_back(socket):
     client = ''
     print ("waiting message")
     while True:
-        msg = s.recv(30)
+        msg = socket.recv(32)
         client += msg.decode("utf-8")
+        if (len(client) >= 8): break
     print(client)
-    s.send(bytes(client, "utf-8"))
+    socket.send(bytes(client, "utf-8"))
 
 def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message
@@ -53,16 +55,15 @@ def loop():
         msg = ''
         full_msg = ''
         while True:
-            msg = clientsocket.recv(30)
+            msg = clientsocket.recv(32)
             full_msg += msg.decode("utf-8)")
-            if (len(full_msg) >= 12):
-                break
+            if (len(full_msg) >= 12): break
         print (full_msg)
-        if clientsocket is True:
-            message_back(s)
+        message_back(clientsocket)
 
 def main():
-    #create_list(CLIENTS)
+    create_list(CLIENTS)
+    print ("Client List Created")
     loop()
     pause = input("Press Enter to leave")
 
