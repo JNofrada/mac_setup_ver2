@@ -28,14 +28,20 @@ def create_list(CLIENTS):
     client.close()
 
 def message_back(socket):
-    client = ''
-    print ("waiting message")
+    msg2 = ''
+    full2 = ''
+    new_msg = True
     while True:
-        msg = socket.recv(32)
-        client += msg.decode("utf-8")
-        if (len(client) >= 8): break
-    print(client)
-    socket.send(bytes(client, "utf-8"))
+        msg2 = socket.recv(32)
+        if new_msg:
+            msg_len = int(msg2[:BUF_SIZE])
+            new_msg = False
+        full2 += msg2.decode("utf-8")
+        if len(full2)-BUF_SIZE == msg_len:
+            print(full2[BUF_SIZE:])
+            new_msg = True
+            break
+    socket.send(bytes(full2, "utf-8"))
 
 def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message

@@ -8,15 +8,21 @@ PORT = 5000
 
 def message_back(socket):
     client = input("Which client are you? ")
+    client = get_buff(client)
     socket.send(bytes(client, "utf-8"))
     msg2 = ''
     full2 = ''
-    print ("Waiting message")
+    new_msg = True
     while True:
         msg2 = socket.recv(32)
+        if new_msg:
+            msg_len = int(msg2[:BUF_SIZE])
+            new_msg = False
         full2 += msg2.decode("utf-8")
-        if (len(full2) >= 8): break
-    print (full2)
+        if len(full2)-BUF_SIZE == msg_len:
+            print(full2[BUF_SIZE:])
+            new_msg = True
+            break
 
 def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message
@@ -38,8 +44,8 @@ def loop():
                 new_msg = False
             full1 += msg1.decode("utf-8")
             if len(full1)-BUF_SIZE == msg_len:
-                print (full1)
                 print(full1[BUF_SIZE:])
+                new_msg = True
                 break
         s.send(bytes("Hello Server", "utf-8"))
         message_back(s)
