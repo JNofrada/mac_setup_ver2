@@ -27,21 +27,25 @@ def create_list(CLIENTS):
         CLIENTS.append(Client(client_name,addigy))
     client.close()
 
-def message_back(socket):
-    msg2 = ''
-    full2 = ''
+def msgrecv(socket):
+    msg1 = ''
+    full1 = ''
     new_msg = True
     while True:
-        msg2 = socket.recv(32)
+        msg1 = s.recv(32)
         if new_msg:
-            msg_len = int(msg2[:BUF_SIZE])
+            msg_len = int(msg1[:BUF_SIZE])
             new_msg = False
-        full2 += msg2.decode("utf-8")
-        if len(full2)-BUF_SIZE == msg_len:
-            print(full2[BUF_SIZE:])
+        full1 += msg1.decode("utf-8")
+        if len(full1)-BUF_SIZE == msg_len:
             new_msg = True
             break
-    socket.send(bytes(full2, "utf-8"))
+    return (full1)
+
+def message_back(socket):
+    message = msgrecv(socket)
+    print (message[BUF_SIZE:])
+    socket.send(bytes(message, "utf-8"))
 
 def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message
@@ -58,13 +62,8 @@ def loop():
         msg = "Welcome to the server"
         msg = get_buff(msg)
         clientsocket.send(bytes(msg, "utf-8"))
-        msg = ''
-        full_msg = ''
-        while True:
-            msg = clientsocket.recv(32)
-            full_msg += msg.decode("utf-8)")
-            if (len(full_msg) >= 12): break
-        print (full_msg)
+        message = msgrecv(clientsocket)
+        print (message[BUF_SIZE:])
         message_back(clientsocket)
 
 def main():

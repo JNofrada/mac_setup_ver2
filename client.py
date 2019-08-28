@@ -14,20 +14,8 @@ def message_back(socket):
     asset = set_asset()
     msg = get_buff(f"Serial: {serial}\nClient: {client}\nAsset: {asset}")
     socket.send(bytes(msg, "utf-8"))
-    msg2 = ''
-    full2 = ''
-    new_msg = True
-    while True:
-        print ("Waiting message back")
-        msg2 = socket.recv(32)
-        if new_msg:
-            msg_len = int(msg2[:BUF_SIZE])
-            new_msg = False
-        full2 += msg2.decode("utf-8")
-        if len(full2)-BUF_SIZE == msg_len:
-            print(full2[BUF_SIZE:])
-            new_msg = True
-            break
+    message = msgrecv(socket)
+    print (message[BUF_SIZE:])
 
 def get_serial():
     task = subprocess.Popen(['system_profiler', 'SPHardwareDataType'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -50,9 +38,7 @@ def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message
     return (message)
 
-def loop():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
+def msgrecv(socket):
     msg1 = ''
     full1 = ''
     new_msg = True
@@ -63,9 +49,15 @@ def loop():
             new_msg = False
         full1 += msg1.decode("utf-8")
         if len(full1)-BUF_SIZE == msg_len:
-            print(full1[BUF_SIZE:])
             new_msg = True
             break
+    return (full1)
+
+def loop():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((HOST, PORT))
+    message = msgrecv(s)
+    print(message[BUF_SIZE:])
     print("going to message")
     message_back(s)
     s.close()
