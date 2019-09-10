@@ -3,7 +3,7 @@ import socket
 import time
 
 BUF_SIZE = 29
-HOST = '172.20.1.232'
+HOST = '172.20.1.205'
 PORT = 5000
 
 def message_back(socket):
@@ -15,7 +15,7 @@ def message_back(socket):
     msg = get_buff(f"Serial: {serial}\nClient: {client}\nAsset: {asset}")
     socket.send(bytes(msg, "utf-8"))
     message = msgrecv(socket)
-    print (message[BUF_SIZE:])
+    print (message)
 
 def get_serial():
     task = subprocess.Popen(['system_profiler', 'SPHardwareDataType'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -43,7 +43,7 @@ def msgrecv(socket):
     full1 = ''
     new_msg = True
     while True:
-        msg1 = s.recv(32)
+        msg1 = socket.recv(32)
         if new_msg:
             msg_len = int(msg1[:BUF_SIZE])
             new_msg = False
@@ -51,11 +51,11 @@ def msgrecv(socket):
         if len(full1)-BUF_SIZE == msg_len:
             new_msg = True
             break
-    return (full1)
+    return (full1[BUF_SIZE:])
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
+    s.connect((socket.gethostname(), PORT))
     message = msgrecv(s)
     print(message[BUF_SIZE:])
     print("going to message")

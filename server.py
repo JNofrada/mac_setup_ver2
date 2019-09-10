@@ -17,6 +17,17 @@ class Client:
         print(self.client_name)
         print(self.addigy)
 
+class Comp:
+    def __init__(self, serial, client, asset):
+        self.serial = serial
+        self.client = client
+        self.asset = asset
+
+    def print_obj(self):
+        print(self.serial)
+        print(self.client)
+        print(self.asset)
+
 def create_list(CLIENTS):
     client = open("client.txt")
     while True: 
@@ -32,7 +43,7 @@ def msgrecv(socket):
     full1 = ''
     new_msg = True
     while True:
-        msg1 = s.recv(32)
+        msg1 = socket.recv(32)
         if new_msg:
             msg_len = int(msg1[:BUF_SIZE])
             new_msg = False
@@ -40,12 +51,17 @@ def msgrecv(socket):
         if len(full1)-BUF_SIZE == msg_len:
             new_msg = True
             break
-    return (full1)
+    return (full1[BUF_SIZE:])
 
 def message_back(socket):
     message = msgrecv(socket)
-    print (message[BUF_SIZE:])
-    socket.send(bytes(message, "utf-8"))
+    split = message.split('\n')
+    serial = (split[0].split())[1]
+    client = (split[1].split())[1]
+    asset = (split[2].split())[1]
+    COMP.append(Comp(serial, client, asset))
+    COMP[0].print_obj()
+    socket.send(bytes(get_buff(message), "utf-8"))
 
 def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message
@@ -62,8 +78,6 @@ def loop():
         msg = "Welcome to the server"
         msg = get_buff(msg)
         clientsocket.send(bytes(msg, "utf-8"))
-        message = msgrecv(clientsocket)
-        print (message[BUF_SIZE:])
         message_back(clientsocket)
 
 def main():
