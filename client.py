@@ -9,13 +9,10 @@ PORT = 5000
 def message_back(socket):
     #serial = get_serial()
     serial = "test serial"
-    print (serial)
     client = input("Which client are you? ")
     asset = set_asset()
     msg = get_buff(f"Serial: {serial}\nClient: {client}\nAsset: {asset}")
     socket.send(bytes(msg, "utf-8"))
-    message = msgrecv(socket)
-    print (message)
 
 def get_serial():
     task = subprocess.Popen(['system_profiler', 'SPHardwareDataType'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -33,6 +30,15 @@ def set_asset():
     #subprocess.call(["sudo", "scutil", "--set", "HostName", asset])
     #subprocess.call(["sudo", "scutil", "--set", "ComputerName", asset])
     return (asset)
+
+def addigy(socket):
+    message = msgrecv(socket)
+    addigy_download = message.split("&&")
+    print (addigy_download)
+    print ("Installing Addigy")
+    #subprocess.call(addigy_download[0])
+    #subprocess.call(addigy_download[1])
+    #subprocess.call(addigy_download[2])
 
 def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message
@@ -60,6 +66,7 @@ def loop():
     print(message[BUF_SIZE:])
     print("going to message")
     message_back(s)
+    addigy(s)
     s.close()
 
 def main():

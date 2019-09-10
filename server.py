@@ -31,9 +31,9 @@ class Comp:
 def create_list(CLIENTS):
     client = open("client.txt")
     while True: 
-        client_name = str(client.readline())
+        client_name = str(client.readline()).strip()
         if not client_name: break
-        addigy = str(client.readline())
+        addigy = str(client.readline()).strip()
         if not addigy: break
         CLIENTS.append(Client(client_name,addigy))
     client.close()
@@ -56,12 +56,14 @@ def msgrecv(socket):
 def message_back(socket):
     message = msgrecv(socket)
     split = message.split('\n')
-    serial = (split[0].split())[1]
-    client = (split[1].split())[1]
-    asset = (split[2].split())[1]
+    serial = (split[0].split())[1].strip()
+    client = (split[1].split())[1].strip()
+    asset = (split[2].split())[1].strip()
     COMP.append(Comp(serial, client, asset))
     COMP[0].print_obj()
-    socket.send(bytes(get_buff(message), "utf-8"))
+    for x in CLIENTS:
+        if x.client_name == client:
+            socket.send(bytes(get_buff(x.addigy), "utf-8"))
 
 def get_buff(message):
     message = f"{len(message):<{BUF_SIZE}}" + message
