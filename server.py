@@ -1,6 +1,6 @@
 import sys
-import time
 import socket
+import sendrec
 
 BUF_SIZE = 29
 HOST = "172.20.1.232"
@@ -38,36 +38,18 @@ def create_list(CLIENTS):
         CLIENTS.append(Client(client_name,addigy))
     client.close()
 
-def msgrecv(socket):
-    msg1 = ''
-    full1 = ''
-    new_msg = True
-    while True:
-        msg1 = socket.recv(32)
-        if new_msg:
-            msg_len = int(msg1[:BUF_SIZE])
-            new_msg = False
-        full1 += msg1.decode("utf-8")
-        if len(full1)-BUF_SIZE == msg_len:
-            new_msg = True
-            break
-    return (full1[BUF_SIZE:])
-
 def message_back(socket):
-    message = msgrecv(socket)
+    message = sendrec.msgrecv(socket, BUF_SIZE)
     split = message.split('\n')
     serial = (split[0].split())[1].strip()
     client = (split[1].split())[1].strip()
     asset = (split[2].split())[1].strip()
     COMP.append(Comp(serial, client, asset))
+
     COMP[0].print_obj()
     for x in CLIENTS:
         if x.client_name == client:
-            socket.send(bytes(get_buff(x.addigy), "utf-8"))
-
-def get_buff(message):
-    message = f"{len(message):<{BUF_SIZE}}" + message
-    return (message)
+            socket.send(bytes(sendrec.get_buff(x.addigy), "utf-8"))
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -78,7 +60,7 @@ def loop():
         clientsocket, address = s.accept()
         print(f"Connection from {address} has been established")
         msg = "Welcome to the server"
-        msg = get_buff(msg)
+        msg = sendrec.get_buff(msg, BUF_SIZE)
         clientsocket.send(bytes(msg, "utf-8"))
         message_back(clientsocket)
 

@@ -10,3 +10,7 @@ Bold
 sudo curl -o /tmp/macinstall https://agents.addigy.com/installer-darwin-amd64 && sudo chmod +x /tmp/macinstall && sudo /tmp/macinstall realm=prod orgid=7a000f1d-8057-4066-b67f-c9344ae0d799 policy_id=92719119-6e64-4792-9f29-55911aa26e5a
 Black Frame
 sudo curl -o /tmp/macinstall https://agents.addigy.com/installer-darwin-amd64 && sudo chmod +x /tmp/macinstall && sudo /tmp/macinstall realm=prod orgid=7a000f1d-8057-4066-b67f-c9344ae0d799 policy_id=d68894e4-3bc3-4b5b-9131-d4cfed63a324
+Laspata
+sudo curl -o /tmp/macinstall https://agents.addigy.com/installer-darwin-amd64 && sudo chmod +x /tmp/macinstall && sudo /tmp/macinstall realm=prod orgid=7a000f1d-8057-4066-b67f-c9344ae0d799 policy_id=cc67b08c-b431-4ec8-b686-78b96b33a49c
+Valiant
+sudo curl -o /tmp/macinstall https://agents.addigy.com/installer-darwin-amd64 && sudo chmod +x /tmp/macinstall && sudo /tmp/macinstall realm=prod orgid=7a000f1d-8057-4066-b67f-c9344ae0d799 policy_id=e0a55578-d3ae-4fe4-a7d2-a0380e2350a2
