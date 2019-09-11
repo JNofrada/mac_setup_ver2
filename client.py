@@ -1,6 +1,7 @@
 import sys
 import socket
 import sendrec
+import subprocess
 
 BUF_SIZE = 29
 HOST = '172.20.1.205'
@@ -11,7 +12,7 @@ def message_back(socket):
     serial = "test serial"
     client = input("Which client are you? ")
     asset = set_asset()
-    msg = sendrec.get_buff(f"Serial: {serial}\nClient: {client}\nAsset: {asset}")
+    msg = sendrec.get_buff(f"Serial: {serial}\nClient: {client}\nAsset: {asset}", BUF_SIZE)
     socket.send(bytes(msg, "utf-8"))
 
 def get_serial():
@@ -32,18 +33,17 @@ def set_asset():
     return (asset)
 
 def addigy(socket):
-    message = sendrec.msgrecv(socket)
+    message = sendrec.msgrecv(socket, BUF_SIZE)
     addigy_download = message.split("&&")
-    print (addigy_download)
     print ("Installing Addigy")
-    #subprocess.call(addigy_download[0])
-    #subprocess.call(addigy_download[1])
-    #subprocess.call(addigy_download[2])
+    subprocess.call(addigy_download[0].split())
+    subprocess.call(addigy_download[1].split())
+    subprocess.call(addigy_download[2].split())
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((socket.gethostname(), PORT))
-    message = sendrec.msgrecv(s)
+    s.connect((HOST, PORT))
+    message = sendrec.msgrecv(s, BUF_SIZE)
     print(message[BUF_SIZE:])
     print("going to message")
     message_back(s)
