@@ -28,6 +28,12 @@ class Comp:
         print(self.client)
         print(self.asset)
 
+    def __eq__(self, other):
+        if self.serial == other.serial:
+            return True
+        else:
+            return False
+
 def create_list(CLIENTS):
     client = open("client.txt")
     while True: 
@@ -44,12 +50,21 @@ def message_back(socket):
     serial = (split[0].split())[1].strip()
     client = (split[1].split())[1].strip()
     asset = (split[2].split())[1].strip()
-    COMP.append(Comp(serial, client, asset))
-
-    COMP[0].print_obj()
-    for x in CLIENTS:
-        if x.client_name == client:
-            socket.send(bytes(sendrec.get_buff(x.addigy), "utf-8"))
+    new_mac = Comp(serial, client, asset)
+    for x in COMP:
+        if COMP[x] == new_mac:
+            confirm = f"A previous Mac was found with the serial {serial}, but with the asset {COMP[x].asset} from the client {COMP[x].client}\nSetup with previous config (y/n)? "
+            confirm = sendrec.get_buff(confirm, BUF_SIZE)
+            socket.send(bytes(confirm, "utf-8"))
+            response = sendrec.msgrecv(socket, BUF_SIZE)
+            if response == 'y':
+                for y in CLIENTS:
+                    if x.client_name == COMP[y].client:
+                        socket.send(bytes(sendrec.get_buff(x.addigy), "utf-8"))
+            if response == 'n':
+                for y in CLIENTS:
+                    if x.client_name == client:
+                        socket.send(bytes(sendrec.get_buff(x.addigy), "utf-8"))
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
