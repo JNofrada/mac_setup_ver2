@@ -57,14 +57,23 @@ def message_back(socket):
             confirm = sendrec.get_buff(confirm, BUF_SIZE)
             socket.send(bytes(confirm, "utf-8"))
             response = sendrec.msgrecv(socket, BUF_SIZE)
-            if response == 'y':
-                for y in CLIENTS:
-                    if x.client_name == COMP[y].client:
-                        socket.send(bytes(sendrec.get_buff(x.addigy), "utf-8"))
-            if response == 'n':
-                for y in CLIENTS:
-                    if x.client_name == client:
-                        socket.send(bytes(sendrec.get_buff(x.addigy), "utf-8"))
+            repeat = True
+            while repeat:
+                if response == 'y':
+                    for y in CLIENTS:
+                        if x.client_name == COMP[y].client:
+                            socket.send(bytes(sendrec.get_buff(x.addigy, BUF_SIZE), "utf-8"))
+                            del new_mac
+                            repeat = False
+                if response == 'n':
+                    for y in CLIENTS:
+                        if x.client_name == client:
+                            socket.send(bytes(sendrec.get_buff(x.addigy, BUF_SIZE), "utf-8"))
+                            COMP[x].client = client
+                            COMP[x].asset = asset
+                            repeat = False
+                else:
+                    socket.send(bytes(confirm, "utf-8"))
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -87,5 +96,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
