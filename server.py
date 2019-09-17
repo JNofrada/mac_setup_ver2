@@ -45,12 +45,18 @@ def create_list(CLIENTS):
     client.close()
 
 def message_back(socket):
-    message = sendrec.msgrecv(socket, BUF_SIZE)
+    try:
+        message = sendrec.msgrecv(socket, BUF_SIZE)
+    except:
+        print ("Client disconnected. Please restart client")
+        return
     split = message.split('\n')
     serial = (split[0].split())[1].strip()
     client = (split[1].split())[1].strip()
     asset = (split[2].split())[1].strip()
     new_mac = Comp(serial, client, asset)
+    if not COMP:
+        COMP.append(new_mac)
     for x in COMP:
         if COMP[x] == new_mac:
             confirm = f"A previous Mac was found with the serial {serial}, but with the asset {COMP[x].asset} from the client {COMP[x].client}\nSetup with previous config (y/n)? "
@@ -74,6 +80,27 @@ def message_back(socket):
                             repeat = False
                 else:
                     socket.send(bytes(confirm, "utf-8"))
+        else:
+            for y in CLIENTS:
+                if x.client_name == client:
+                    socket.send(bytes(sendrec.get_buff(x.addigy, BUF_SIZE), "utf-8"))
+                    COMP[x].client = client
+                    COMP[x].asset = asset
+
+def add_client(socket):
+    try:
+        message = sendrec.msgrecv(socket, BUF_SIZE)
+    except:
+        print ("Client disconnected. Please restart client")
+        return
+    split = message.split('\n')
+    client_name = (split[0].split())[1].strip()
+    addigy = (split[1].split())[1].strip()
+    new_client = Client(client_name, addigy)
+    CLIENTS.append(new_client)
+    msg = f"Added {client_name}"
+    msg = sendrec.get_buff(msg, BUF_SIZE)
+    socket.send(bytes(msg, "utf-8"))
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

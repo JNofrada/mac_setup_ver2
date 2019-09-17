@@ -27,9 +27,9 @@ def get_serial():
 
 def set_asset():
     asset = input("What is the asset tag: ")
-    #subprocess.call(["sudo", "scutil", "--set", "LocalHostName", asset])
-    #subprocess.call(["sudo", "scutil", "--set", "HostName", asset])
-    #subprocess.call(["sudo", "scutil", "--set", "ComputerName", asset])
+    subprocess.call(["sudo", "scutil", "--set", "LocalHostName", asset])
+    subprocess.call(["sudo", "scutil", "--set", "HostName", asset])
+    subprocess.call(["sudo", "scutil", "--set", "ComputerName", asset])
     return (asset)
 
 def addigy(socket):
@@ -40,12 +40,16 @@ def addigy(socket):
     subprocess.call(addigy_download[1].split())
     subprocess.call(addigy_download[2].split())
 
+def mainmenu():
+    print ("1) Run setup\n2) Add Client\n3) Update Addigy Command\n4) Remove Client")
+
+
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, PORT))
     message = sendrec.msgrecv(s, BUF_SIZE)
     print(message[BUF_SIZE:])
-    print("going to message")
+    mainmenu()
     message_back(s)
     addigy(s)
     s.close()
