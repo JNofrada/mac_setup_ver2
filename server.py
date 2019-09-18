@@ -94,13 +94,66 @@ def add_client(socket):
         print ("Client disconnected. Please restart client")
         return
     split = message.split('\n')
-    client_name = (split[0].split())[1].strip()
-    addigy = (split[1].split())[1].strip()
+    client_name = split[0].strip()
+    addigy = split[1].strip()
     new_client = Client(client_name, addigy)
     CLIENTS.append(new_client)
     msg = f"Added {client_name}"
     msg = sendrec.get_buff(msg, BUF_SIZE)
     socket.send(bytes(msg, "utf-8"))
+
+def update_addigy(socket):
+    try:
+        message = sendrec.msgrecv(socket, BUF_SIZE)
+    except:
+        print ("Client disconnected. Please restart client")
+        return
+    split = message.split('\n')
+    client_name = split[0].strip()
+    addigy = split[1].strip()
+    for x in CLIENTS:
+        if x.client_name == client_name:
+            x.addigy = addigy
+    msg = f"Updated Addigy command for {client_name}"
+    msg = sendrec.get_buff(msg, BUF_SIZE)
+    socket.send(bytes(msg, "utf-8"))
+
+def remove_client(socket):
+    try:
+        client_name = sendrec.msgrecv(socket, BUF_SIZE)
+    except:
+        print ("Client disconnected. Please restart client")
+        return
+    for x in CLIENTS:
+        if x.client_name == client_name:
+            CLIENTS.remove(x)
+    msg = f"Removed {client_name}"
+    msg = sendrec.get_buff(msg, BUF_SIZE)
+    socket.send(bytes(msg, "utf-8"))
+
+def mainmenu(socket):
+    while True:
+        try:
+            select =  sendrec.msgrecv(socket, BUF_SIZE)
+        except:
+            print ("Client disconnected. Please restart client")
+        if select == '1':
+            message_back(socket)
+            break
+        elif select == '2':
+            add_client(socket)
+            break
+        elif select == '3':
+            update_addigy(socket)
+            break
+        elif select == '4':
+            remove_client(socket)
+            break
+        elif select == 'Exit' or select == 'exit':
+            break
+        else:
+            print ("Invalid selection")
+    socket.close()
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -113,7 +166,7 @@ def loop():
         msg = "Welcome to the server"
         msg = sendrec.get_buff(msg, BUF_SIZE)
         clientsocket.send(bytes(msg, "utf-8"))
-        message_back(clientsocket)
+        mainmenu(clientsocket)
 
 def main():
     create_list(CLIENTS)

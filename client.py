@@ -40,23 +40,45 @@ def addigy(socket):
     subprocess.call(addigy_download[1].split())
     subprocess.call(addigy_download[2].split())
 
-def mainmenu():
-    print ("1) Run setup\n2) Add Client\n3) Update Addigy Command\n4) Remove Client")
+def change_stuff(socket):
+    client = input("Client name: ")
+    addigy = input("Addigy command: ")
+    msg = sendrec.get_buff(f"{client}\n{addigy}")
+    socket.send(bytes(msg, "utf-8"))
+    print (sendrec.msgrecv(socket, BUF_SIZE))
 
+def mainmenu(socket):
+    while True:
+        select =  input("1) Run setup\n2) Add Client\n3) Update Addigy Command\n4) Remove Client\nExit to leave")
+        socket.send(bytes(sendrec.get_buff(select)), BUF_SIZE)
+        if select == '1':
+            message_back(socket)
+            addigy(socket)
+            break
+        elif select == '2':
+            change_stuff(socket)
+            break
+        elif select == '3':
+            change_stuff(socket)
+            break
+        elif select == '4':
+            change_stuff(socket)
+            break
+        elif select == 'Exit' or select == 'exit':
+            break
+        else:
+            print ("Invalid selection")
+    socket.close()
 
 def loop():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, PORT))
     message = sendrec.msgrecv(s, BUF_SIZE)
     print(message[BUF_SIZE:])
-    mainmenu()
-    message_back(s)
-    addigy(s)
-    s.close()
+    mainmenu(s)
 
 def main():
     loop()
-    pause = input("Press Enter to leave")
 
 if __name__ == '__main__':
     main()
