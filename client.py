@@ -71,11 +71,18 @@ def mainmenu(socket):
     socket.close()
 
 def loop():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
-    message = sendrec.msgrecv(s, BUF_SIZE)
-    print(message[BUF_SIZE:])
-    mainmenu(s)
+    while True:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((HOST, PORT))
+        except:
+            print ("Server not connected. Retrying")
+            pass
+        else:
+            message = sendrec.msgrecv(s, BUF_SIZE)
+            print(message[BUF_SIZE:])
+            mainmenu(s)
+            break
 
 def main():
     loop()
